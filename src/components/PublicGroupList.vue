@@ -63,7 +63,23 @@
                                         </div>
                                         <div class="extra-info">
                                             <div v-if="showCertificateExpiry && monitor.element.type === 'http'">
-                                                <Tag :item="{name: $t('Cert Exp.'), value: formattedCertExpiryMessage(monitor), color: certExpiryColor(monitor)}" :size="'sm'" />
+                                                <Tag
+                                                    :item="{
+                                                        name: $t('Cert Exp.'),
+                                                        value: formattedCertExpiryMessage(monitor),
+                                                        color: monitor.element.certExpiryDaysRemaining > 7 ? '#059669' : '#DC2626'
+                                                    }"
+                                                    size="sm"
+                                                />
+                                            </div>
+                                            <div v-if="showCertificateValid && monitor.element.type === 'http'">
+                                                <Tag
+                                                    :item="{
+                                                        name: monitor.element.validCert ? $t('valid Certificate') : $t('bad Certificate'),
+                                                        color: monitor.element.validCert ? '#059669' : '#DC2626',
+                                                    }"
+                                                    size="sm"
+                                                />
                                             </div>
                                             <div v-if="showTags">
                                                 <Tag v-for="tag in monitor.element.tags" :key="tag" :item="tag" :size="'sm'" />
@@ -109,10 +125,14 @@ export default {
         showTags: {
             type: Boolean,
         },
-        /** Should expiry be shown? */
+        /** Should certificate expiry be shown? */
         showCertificateExpiry: {
             type: Boolean,
-        }
+        },
+        /** Should certificate validity be shown? */
+        showCertificateValid: {
+            type: Boolean,
+        },
     },
     data() {
         return {
@@ -170,10 +190,9 @@ export default {
          * @returns {string}
          */
         formattedCertExpiryMessage(monitor) {
-            if (monitor?.element?.validCert && monitor?.element?.certExpiryDaysRemaining) {
+            console.log(monitor?.element);
+            if (monitor?.element?.certExpiryDaysRemaining) {
                 return monitor.element.certExpiryDaysRemaining + " " + this.$tc("day", monitor.element.certExpiryDaysRemaining);
-            } else if (monitor?.element?.validCert === false) {
-                return this.$t("noOrBadCertificate");
             } else {
                 return this.$t("Unknown") + " " + this.$tc("day", 2);
             }
@@ -185,10 +204,7 @@ export default {
          * @returns {string}
          */
         certExpiryColor(monitor) {
-            if (monitor?.element?.validCert && monitor.element.certExpiryDaysRemaining > 7) {
-                return "#059669";
-            }
-            return "#DC2626";
+            return ;
         },
     }
 };

@@ -202,24 +202,23 @@ class Monitor extends BeanModel {
     /**
      * Gets certificate expiry for this monitor
      * @param {number} monitorID ID of monitor to send
-     * @returns {Promise<LooseObject<any>>}
+     * @returns {certExpiryDaysRemaining: number|null, validCert: boolean }
      */
     async getCertExpiry(monitorID) {
         let tlsInfoBean = await R.findOne("monitor_tls_info", "monitor_id = ?", [
             monitorID,
         ]);
-        let tlsInfo;
         if (tlsInfoBean) {
-            tlsInfo = JSON.parse(tlsInfoBean?.info_json);
-            if (tlsInfo?.valid && tlsInfo?.certInfo?.daysRemaining) {
+            const tlsInfo = JSON.parse(tlsInfoBean?.info_json);
+            if (tlsInfo?.certInfo?.daysRemaining) {
                 return {
                     certExpiryDaysRemaining: tlsInfo.certInfo.daysRemaining,
-                    validCert: true
+                    validCert: tlsInfo?.valid,
                 };
             }
         }
         return {
-            certExpiryDaysRemaining: "",
+            certExpiryDaysRemaining: null,
             validCert: false
         };
     }
