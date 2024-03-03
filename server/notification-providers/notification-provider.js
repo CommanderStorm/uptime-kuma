@@ -38,6 +38,36 @@ class NotificationProvider {
 
         throw new Error(msg);
     }
+
+    /**
+     * Extract
+     * @param {object|null} monitorJSON Monitor details (For Up/Down/Cert-Expiry only)
+     * @returns {string|undefined} the address/url/hostname of the monitor
+     */
+    extractURL(monitorJSON) {
+        if (monitorJSON === null) {
+            return undefined;
+        }
+        switch (monitorJSON["type"]) {
+            case "ping":
+                return monitorJSON["hostname"];
+            case "docker":
+                return monitorJSON["docker_host"];
+            case "port":
+            case "dns":
+            case "gamedig":
+            case "steam":
+                if (monitorJSON["port"]) {
+                    return monitorJSON["hostname"] + ":" + monitorJSON["port"];
+                }
+                return monitorJSON["hostname"];
+            default:
+                if (monitorJSON["url"] !== "https://") {
+                    return monitorJSON["url"];
+                }
+                return undefined;
+        }
+    }
 }
 
 module.exports = NotificationProvider;

@@ -130,25 +130,10 @@ class Teams extends NotificationProvider {
                 return okMsg;
             }
 
-            let url;
-
-            switch (monitorJSON["type"]) {
-                case "http":
-                case "keywork":
-                    url = monitorJSON["url"];
-                    break;
-                case "docker":
-                    url = monitorJSON["docker_host"];
-                    break;
-                default:
-                    url = monitorJSON["hostname"];
-                    break;
-            }
-
             const payload = this._notificationPayloadFactory({
                 monitorMessage: heartbeatJSON.msg,
                 monitorName: monitorJSON.name,
-                monitorUrl: url,
+                monitorUrl: this.extractURL(monitorJSON),
                 status: heartbeatJSON.status,
             });
 

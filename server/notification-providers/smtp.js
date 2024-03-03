@@ -89,16 +89,10 @@ class SMTP extends NotificationProvider {
     generateContext(msg, monitorJSON, heartbeatJSON) {
         // Let's start with dummy values to simplify code
         let monitorName = "Monitor Name not available";
-        let monitorHostnameOrURL = "testing.hostname";
+        let monitorHostnameOrURL = this.extractURL(monitorJSON) || "testing.hostname";
 
         if (monitorJSON !== null) {
             monitorName = monitorJSON["name"];
-
-            if (monitorJSON["type"] === "http" || monitorJSON["type"] === "keyword" || monitorJSON["type"] === "json-query") {
-                monitorHostnameOrURL = monitorJSON["url"];
-            } else {
-                monitorHostnameOrURL = monitorJSON["hostname"];
-            }
         }
 
         let serviceStatus = "⚠️ Test";
