@@ -87,7 +87,7 @@ jobs:
             -v $PWD:/workspace \
             -w /workspace \
             arm32v7/node:${{ matrix.node }}-slim \
-            bash -c "npm install --production"
+            bash -c "apt-get update && apt-get install -y python3 make g++ && npm install --production"
 
   check-linters:
     runs-on: ubuntu-latest
